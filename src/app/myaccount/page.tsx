@@ -50,29 +50,51 @@ interface UserData {
     resources: Resource[]
 }
 
+interface APIError {
+    error: string
+}
+
 const AccountPage = () => {
     const { data: session } = useSession()
     const [userData, setUserData] = useState<UserData | null>(null)
     const [loading, setLoading] = useState(true)
+    const [error, setError] = useState<string | null>(null)
 
     useEffect(() => {
         const fetchUser = async () => {
             setLoading(true)
+            setError(null)
             try {
-                const res = await fetch("/api/user/myaccount")
-                const data: UserData = await res.json()
-                setUserData(data)
+                const res = await fetch("/api/user/myaccount", { credentials: "include" })
+                const data: UserData | APIError = await res.json()
+
+                if ("error" in data) {
+                    setError(data.error)
+                    setUserData(null)
+                } else {
+                    // Ensure default values so frontend never crashes
+                    setUserData({
+                        name: data.name || "User",
+                        email: data.email || "unknown@example.com",
+                        profile: data.profile || "",
+                        posts: data.posts || [],
+                        questions: data.questions || [],
+                        resources: data.resources || [],
+                    })
+                }
             } catch (err) {
                 console.error(err)
+                setError("Failed to fetch user data.")
             } finally {
                 setLoading(false)
             }
         }
+
         fetchUser()
     }, [])
 
     if (loading) return <p className="text-center py-8">Loading account...</p>
-    if (!userData) return <p className="text-center py-8 text-red-500">Failed to load account data.</p>
+    if (error) return <p className="text-center py-8 text-red-500">{error}</p>
 
     return (
         <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
@@ -98,12 +120,12 @@ const AccountPage = () => {
                 <CardContent>
                     <div className="flex flex-col md:flex-row items-center gap-6 mb-6">
                         <Avatar className="h-20 w-20">
-                            <AvatarImage src={userData.profile || ""} />
-                            <AvatarFallback>{userData.name.charAt(0)}</AvatarFallback>
+                            <AvatarImage src={userData?.profile || ""} />
+                            <AvatarFallback>{userData?.name?.charAt(0) || "U"}</AvatarFallback>
                         </Avatar>
                         <div className="text-center md:text-left">
-                            <h3 className="font-semibold text-lg">{userData.name}</h3>
-                            <p className="text-slate-600">{userData.email}</p>
+                            <h3 className="font-semibold text-lg">{userData?.name || "User"}</h3>
+                            <p className="text-slate-600">{userData?.email || "unknown@example.com"}</p>
                         </div>
                     </div>
 
@@ -119,7 +141,7 @@ const AccountPage = () => {
 
                         {/* Posts Tab */}
                         <TabsContent value="posts">
-                            {userData.posts.length ? (
+                            {userData?.posts.length ? (
                                 <div className="flex flex-wrap gap-4 justify-center">
                                     {userData.posts.map((post) => (
                                         <PostAC key={post._id} post={post} />
@@ -132,7 +154,7 @@ const AccountPage = () => {
 
                         {/* Questions Tab */}
                         <TabsContent value="questions">
-                            {userData.questions.length ? (
+                            {userData?.questions.length ? (
                                 <div className="flex flex-wrap gap-4 justify-center">
                                     {userData.questions.map((q) => (
                                         <QuestionAC key={q._id} question={q} currentUserEmail={userData.email} />
@@ -145,7 +167,7 @@ const AccountPage = () => {
 
                         {/* Resources Tab */}
                         <TabsContent value="resources">
-                            {userData.resources.length ? (
+                            {userData?.resources.length ? (
                                 <div className="flex flex-wrap gap-4 justify-center">
                                     {userData.resources.map((res) => (
                                         <ResourceAC key={res._id} resource={res} />
