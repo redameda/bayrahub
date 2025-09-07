@@ -30,7 +30,7 @@ export const PostCard: React.FC<PostCardProps> = ({ post }) => {
                         <AvatarFallback>
                             {post.writer?.name?.charAt(0).toUpperCase() || "U"}
                         </AvatarFallback>
-                        <AvatarImage src={post.writer.profile} />
+                        <AvatarImage src={post?.writer?.profile} />
                     </Avatar>
                     <div>
                         <h1 className="font-bold text-yellow-500">
