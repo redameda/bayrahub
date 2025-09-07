@@ -43,9 +43,6 @@ const AccountAndThemeMenu = () => {
 
                 {/* Account Links */}
                 <Link href="/myaccount">
-                    <DropdownMenuItem>
-                        <UserRound className="mr-2 w-4 h-4" /> My Account
-                    </DropdownMenuItem>
                 </Link>
                 <DropdownMenuItem onClick={() => signOut()}>
                     <LogOut className="mr-2 w-4 h-4" /> Logout
