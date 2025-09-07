@@ -11,7 +11,7 @@ import AccountAndThemeMenu from "./NavComp/Avatar"
 
 export default function Navbar() {
     const [isOpen, setIsOpen] = useState(false)
-    const links = ["Home", "Posts", "Questions", "Resources"]
+    const links = ["Posts", "Questions", "Resources"]
     const { data: session } = useSession()
     return (
         <nav className="sticky top-0 z-50 w-full border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
