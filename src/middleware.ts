@@ -6,17 +6,14 @@ export async function middleware(req: NextRequest) {
     // Get the token using next-auth
     const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET })
 
-    // List of protected routes
-    const protectedRoutes = ["/"]
-
     const pathname = req.nextUrl.pathname
 
-    // Check if the route is protected
-    if (protectedRoutes.includes(pathname)) {
-        // If no token, redirect to login
+    // Protect only the home page
+    if (pathname === "/") {
+        // If no token, redirect back to home page
         if (!token) {
             const url = req.nextUrl.clone()
-            url.pathname = "/login"
+            url.pathname = "/" // redirect to home
             return NextResponse.redirect(url)
         }
     }
@@ -25,7 +22,7 @@ export async function middleware(req: NextRequest) {
     return NextResponse.next()
 }
 
-// Apply middleware only to these paths
+// Apply middleware only to home page
 export const config = {
     matcher: ["/"],
 }
