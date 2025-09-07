@@ -1,4 +1,4 @@
-import { Avatar, AvatarFallback } from "../ui/avatar"
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar"
 import { Eye, Heart, BookOpen, MessagesSquare } from "lucide-react"
 import React from "react"
 import { Button } from "../ui/button"
@@ -30,6 +30,7 @@ export const PostCard: React.FC<PostCardProps> = ({ post }) => {
                         <AvatarFallback>
                             {post.writer?.name?.charAt(0).toUpperCase() || "U"}
                         </AvatarFallback>
+                        <AvatarImage src={post.writer.profile} />
                     </Avatar>
                     <div>
                         <h1 className="font-bold text-yellow-500">
